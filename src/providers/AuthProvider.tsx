@@ -2,9 +2,8 @@
 
 import {
   createContext,
-  useEffect,
-  useMemo,
-  useState,
+  useCallback,
+  useSyncExternalStore,
   type ReactNode,
 } from "react";
 import { isAxiosError } from "axios";
@@ -14,6 +13,7 @@ import {
   getAccessToken,
   removeAccessToken,
   saveAccessToken,
+  subscribeToAccessToken,
 } from "@/lib/auth-storage";
 import { getProfile, login as loginRequest } from "@/services/auth.service";
 
@@ -41,89 +41,83 @@ type AuthProviderProps = {
   children: ReactNode;
 };
 
+function getServerAccessToken(): null {
+  return null;
+}
+
 export default function AuthProvider({ children }: AuthProviderProps) {
   const queryClient = useQueryClient();
 
-  /*
-   * Token access is delayed until the component mounts.
-   * This avoids reading localStorage during server rendering.
-   */
-  const [authStorageReady, setAuthStorageReady] = useState(false);
-  const [hasAccessToken, setHasAccessToken] = useState(false);
-
-  useEffect(() => {
-    setHasAccessToken(Boolean(getAccessToken()));
-    setAuthStorageReady(true);
-  }, []);
+  const accessToken = useSyncExternalStore(
+    subscribeToAccessToken,
+    getAccessToken,
+    getServerAccessToken,
+  );
 
   const profileQuery = useQuery({
     queryKey: AUTH_PROFILE_QUERY_KEY,
-    queryFn: getProfile,
-    enabled: authStorageReady && hasAccessToken,
+    queryFn: async () => {
+      try {
+        return await getProfile();
+      } catch (error) {
+        const isUnauthorized =
+          isAxiosError(error) &&
+          (error.response?.status === 401 || error.response?.status === 403);
+
+        if (isUnauthorized) {
+          removeAccessToken();
+        }
+
+        throw error;
+      }
+    },
+    enabled: Boolean(accessToken),
     retry: false,
   });
 
-  useEffect(() => {
-    if (!profileQuery.error) {
-      return;
-    }
+  const login = useCallback(
+    async (credentials: LoginInput): Promise<AuthUser> => {
+      const response = await loginRequest(credentials);
 
-    const isUnauthorized =
-      isAxiosError(profileQuery.error) &&
-      (profileQuery.error.response?.status === 401 ||
-        profileQuery.error.response?.status === 403);
+      saveAccessToken(response.accessToken);
 
-    if (isUnauthorized) {
-      removeAccessToken();
-      setHasAccessToken(false);
-
-      queryClient.removeQueries({
-        queryKey: AUTH_PROFILE_QUERY_KEY,
+      queryClient.setQueryData<ProfileResponse>(AUTH_PROFILE_QUERY_KEY, {
+        message: response.message,
+        user: response.user,
       });
-    }
-  }, [profileQuery.error, queryClient]);
 
-  const login = async (credentials: LoginInput): Promise<AuthUser> => {
-    const response = await loginRequest(credentials);
+      return response.user;
+    },
+    [queryClient],
+  );
 
-    saveAccessToken(response.accessToken);
-    setHasAccessToken(true);
-
-    /*
-     * Immediately populate authentication state from the login response.
-     * A later profile request can provide the user's full profile.
-     */
-    queryClient.setQueryData<ProfileResponse>(AUTH_PROFILE_QUERY_KEY, {
-      message: response.message,
-      user: response.user,
-    });
-
-    return response.user;
-  };
-
-  const logout = (): void => {
+  const logout = useCallback((): void => {
     removeAccessToken();
-    setHasAccessToken(false);
 
     queryClient.removeQueries({
       queryKey: AUTH_PROFILE_QUERY_KEY,
     });
-  };
+  }, [queryClient]);
 
   const user = profileQuery.data?.user ?? null;
 
-  const value = useMemo<AuthContextValue>(
-    () => ({
-      user,
-      isAuthenticated: Boolean(user && hasAccessToken),
-      isLoading:
-        !authStorageReady || (hasAccessToken && profileQuery.isPending),
-      login,
-      logout,
-      hasRole: (role) => user?.roles.includes(role) ?? false,
-    }),
-    [authStorageReady, hasAccessToken, profileQuery.isPending, user],
+  const hasRole = useCallback(
+    (role: UserRole): boolean => {
+      return user?.roles.includes(role) ?? false;
+    },
+    [user],
   );
+
+  const value: AuthContextValue = {
+    user,
+    isAuthenticated: Boolean(accessToken && user),
+    isLoading: Boolean(
+      accessToken && (profileQuery.isPending || profileQuery.isFetching),
+    ),
+    login,
+    logout,
+    hasRole,
+  };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
