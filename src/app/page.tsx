@@ -1,26 +1,23 @@
-// import Navbar from "@/components/shared/NavBar";
-// import { Button } from "@/components/ui/button";
-import PropertyCard from "@/components/shared/PropertyCard";
-import { properties } from "@/constants/properties";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export default function Home() {
   return (
     <main>
-      <section className="px-6 py-20 text-center">
-        <h1 className="text-5xl font-bold">Find your perfect rental home</h1>
+      <section className="mx-auto max-w-7xl px-6 py-24 text-center">
+        <h1 className="text-5xl font-bold">
+          Find your perfect property with RentNest
+        </h1>
 
-        <p className="mt-4 text-gray-600">
-          RentNest connects tenants and landlords in a simple and secure way.
+        <p className="mx-auto mt-5 max-w-2xl text-lg text-gray-600">
+          Browse properties for rent or sale and connect with landlords through
+          one secure marketplace.
         </p>
-      </section>
 
-      <section className="mx-auto max-w-7xl px-6">
-        <h2 className="mb-8 text-3xl font-bold">Featured Properties</h2>
-
-        <div className="grid gap-6 md:grid-cols-3">
-          {properties.map((property) => (
-            <PropertyCard key={property.id} property={property} />
-          ))}
+        <div className="mt-8">
+          <Link href="/properties">
+            <Button>Browse properties</Button>
+          </Link>
         </div>
       </section>
     </main>

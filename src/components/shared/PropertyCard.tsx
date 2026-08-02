@@ -19,6 +19,26 @@ type PropertyCardProps = {
 const PLACEHOLDER_IMAGE =
   "https://images.unsplash.com/photo-1560518883-ce09059eeffa";
 
+/*
+ * Next.js Image only accepts remote hosts configured in next.config.ts.
+ * Add future providers here and in next.config.ts.
+ */
+const ALLOWED_IMAGE_HOSTS = new Set(["images.unsplash.com"]);
+
+function isUsableImageUrl(value: unknown): value is string {
+  if (typeof value !== "string" || value.trim() === "") {
+    return false;
+  }
+
+  try {
+    const url = new URL(value.trim());
+
+    return url.protocol === "https:" && ALLOWED_IMAGE_HOSTS.has(url.hostname);
+  } catch {
+    return false;
+  }
+}
+
 function formatLabel(value: string): string {
   return value
     .toLowerCase()
@@ -36,10 +56,18 @@ function formatPrice(price: number): string {
 }
 
 export default function PropertyCard({ property }: PropertyCardProps) {
-  const hasPropertyImage = property.property_images.length > 0;
+  const propertyImages = Array.isArray(property.property_images)
+    ? property.property_images
+    : [];
 
-  const imageSource = hasPropertyImage
-    ? property.property_images[0]
+  const firstValidImage = propertyImages.find((image) =>
+    isUsableImageUrl(image?.image_url),
+  );
+
+  const hasPropertyImage = Boolean(firstValidImage);
+
+  const imageSource = firstValidImage
+    ? firstValidImage.image_url.trim()
     : PLACEHOLDER_IMAGE;
 
   return (
@@ -50,10 +78,10 @@ export default function PropertyCard({ property }: PropertyCardProps) {
           alt={
             hasPropertyImage
               ? `Property at ${property.address}`
-              : "Placeholder property image"
+              : "Placeholder image for property listing"
           }
           fill
-          sizes="(max-width: 768px) 100vw, 33vw"
+          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
           className="object-cover"
         />
 
@@ -112,9 +140,9 @@ export default function PropertyCard({ property }: PropertyCardProps) {
       </CardContent>
 
       <CardFooter>
-        <Button asChild className="w-full">
-          <Link href={`/properties/${property.property_id}`}>Show details</Link>
-        </Button>
+        <Link href={`/properties/${property.property_id}`} className="w-full">
+          <Button className="w-full">Show details</Button>
+        </Link>
       </CardFooter>
     </Card>
   );

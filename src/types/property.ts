@@ -8,6 +8,12 @@ export type PropertyFeatures = {
   pet_allowed: boolean;
 };
 
+export type PropertyImage = {
+  image_id: number;
+  property_id: number;
+  image_url: string;
+};
+
 export type Property = {
   property_id: number;
   owner_id: number;
@@ -19,7 +25,7 @@ export type Property = {
   created_at: string;
   updated_at: string;
   features: PropertyFeatures | null;
-  property_images: string[];
+  property_images: PropertyImage[];
 };
 
 export type PropertiesResponse = {

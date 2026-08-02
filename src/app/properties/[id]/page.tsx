@@ -1,17 +1,29 @@
+"use client";
+
+import { useQuery } from "@tanstack/react-query";
+
+import PropertyDetails from "@/components/shared/PropertyDetails";
+
+import { getPropertyById } from "@/services/property.service";
+import React from "react";
+
 type Props = {
   params: Promise<{
     id: string;
   }>;
 };
 
-export default async function PropertyDetailsPage({ params }: Props) {
-  const { id } = await params;
+export default function PropertyDetailsPage({ params }: Props) {
+  const { id } = React.use(params);
 
-  return (
-    <main className="mx-auto max-w-7xl p-10">
-      <h1 className="text-3xl font-bold">Property Details</h1>
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["property", id],
+    queryFn: () => getPropertyById(id),
+  });
 
-      <p className="mt-4">Property ID: {id}</p>
-    </main>
-  );
+  if (isLoading) return <p className="p-10">Loading...</p>;
+
+  if (isError || !data) return <p className="p-10">Property not found.</p>;
+
+  return <PropertyDetails property={data} />;
 }
