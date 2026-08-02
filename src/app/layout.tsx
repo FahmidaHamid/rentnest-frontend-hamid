@@ -8,6 +8,7 @@ import {
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import Navbar from "@/components/shared/NavBar";
+import QueryProvider from "@/providers/QueryProvider";
 
 const playfairDisplayHeading = Playfair_Display({
   subsets: ["latin"],
@@ -50,8 +51,10 @@ export default function RootLayout({
       )}
     >
       <body className="min-h-full flex flex-col">
-        <Navbar />
-        {children}
+        <QueryProvider>
+          <Navbar />
+          {children}
+        </QueryProvider>
       </body>
     </html>
   );

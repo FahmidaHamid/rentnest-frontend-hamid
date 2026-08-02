@@ -1,33 +1,121 @@
 import Image from "next/image";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import Link from "next/link";
 
-import { Property } from "@/types/property";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
-type Props = {
+import type { Property } from "@/types/property";
+
+type PropertyCardProps = {
   property: Property;
 };
 
-export default function PropertyCard({ property }: Props) {
+const PLACEHOLDER_IMAGE =
+  "https://images.unsplash.com/photo-1560518883-ce09059eeffa";
+
+function formatLabel(value: string): string {
+  return value
+    .toLowerCase()
+    .split("_")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+}
+
+function formatPrice(price: number): string {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 0,
+  }).format(price);
+}
+
+export default function PropertyCard({ property }: PropertyCardProps) {
+  const hasPropertyImage = property.property_images.length > 0;
+
+  const imageSource = hasPropertyImage
+    ? property.property_images[0]
+    : PLACEHOLDER_IMAGE;
+
   return (
-    <Card>
-      <div className="relative h-48 w-full">
+    <Card className="overflow-hidden">
+      <div className="relative h-52 w-full">
         <Image
-          src={property.image}
-          alt={property.title}
+          src={imageSource}
+          alt={
+            hasPropertyImage
+              ? `Property at ${property.address}`
+              : "Placeholder property image"
+          }
           fill
-          className="rounded-t-lg object-cover"
+          sizes="(max-width: 768px) 100vw, 33vw"
+          className="object-cover"
         />
+
+        {!hasPropertyImage && (
+          <span className="absolute bottom-3 left-3 rounded-md bg-black/75 px-3 py-1 text-xs font-medium text-white">
+            Placeholder image
+          </span>
+        )}
       </div>
 
       <CardHeader>
-        <CardTitle>{property.title}</CardTitle>
+        <CardTitle className="line-clamp-2 text-xl">
+          {property.address}
+        </CardTitle>
+
+        <p className="text-2xl font-bold">
+          {formatPrice(property.asking_price)}
+        </p>
       </CardHeader>
 
-      <CardContent>
-        <p className="text-gray-600">{property.location}</p>
+      <CardContent className="space-y-4">
+        <div className="flex flex-wrap gap-2">
+          <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-medium">
+            {formatLabel(property.type)}
+          </span>
 
-        <p className="mt-2 font-semibold">${property.price}/month</p>
+          <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-medium">
+            {formatLabel(property.status)}
+          </span>
+        </div>
+
+        {property.features ? (
+          <div className="grid grid-cols-3 gap-3 text-sm">
+            <div>
+              <p className="font-semibold">{property.features.bedrooms}</p>
+              <p className="text-gray-500">Bedrooms</p>
+            </div>
+
+            <div>
+              <p className="font-semibold">{property.features.bathrooms}</p>
+              <p className="text-gray-500">Bathrooms</p>
+            </div>
+
+            <div>
+              <p className="font-semibold">
+                {property.features.square_feet.toLocaleString()}
+              </p>
+              <p className="text-gray-500">Sq. ft.</p>
+            </div>
+          </div>
+        ) : (
+          <p className="text-sm text-gray-500">
+            Property features are not available.
+          </p>
+        )}
       </CardContent>
+
+      <CardFooter>
+        <Button asChild className="w-full">
+          <Link href={`/properties/${property.property_id}`}>Show details</Link>
+        </Button>
+      </CardFooter>
     </Card>
   );
 }
