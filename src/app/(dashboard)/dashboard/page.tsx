@@ -59,6 +59,23 @@ export default function DashboardPage() {
             </Button>
           </section>
         )}
+
+        {hasRole("TENANT") && (
+          <section className="rounded-lg border p-6">
+            <h2 className="font-heading text-xl font-semibold">Tenant tools</h2>
+
+            <p className="mt-2 text-sm text-muted-foreground">
+              View your rent and purchase requests.
+            </p>
+
+            <Button
+              className="mt-4"
+              render={<Link href="/dashboard/tenant/requests" />}
+            >
+              View my requests
+            </Button>
+          </section>
+        )}
       </div>
     </main>
   );

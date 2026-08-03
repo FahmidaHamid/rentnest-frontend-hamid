@@ -1,6 +1,7 @@
 import Image from "next/image";
 
 import type { Property } from "@/types/property";
+import PropertyRequestButton from "@/components/shared/PropertyRequestButton";
 
 type PropertyDetailsProps = {
   property: Property;
@@ -100,6 +101,10 @@ export default function PropertyDetails({ property }: PropertyDetailsProps) {
           <p className="font-semibold">Status</p>
           <p>{property.status}</p>
         </div>
+        <PropertyRequestButton
+          propertyId={property.property_id}
+          propertyStatus={property.status}
+        />
       </div>
     </div>
   );
