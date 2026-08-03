@@ -1,5 +1,7 @@
 export type UserRole = "ADMIN" | "TENANT" | "LANDLORD";
 
+export type PublicRegistrationRole = "TENANT" | "LANDLORD";
+
 export type TenantProfile = {
   occupation: string | null;
   monthly_income: number | null;
@@ -55,10 +57,20 @@ export type RegisterInput = {
   last_name: string;
   email: string;
   password: string;
-  roles: UserRole[];
+  roles: PublicRegistrationRole[];
   tenant?: TenantRegistrationData;
   landlord?: LandlordRegistrationData;
 };
+
+// export type RegisterInput = {
+//   first_name: string;
+//   last_name: string;
+//   email: string;
+//   password: string;
+//   roles: UserRole[];
+//   tenant?: TenantRegistrationData;
+//   landlord?: LandlordRegistrationData;
+// };
 
 export type RegisterResponse = {
   message: string;

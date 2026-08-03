@@ -30,7 +30,7 @@ import { Input } from "@/components/ui/input";
 
 const loginSchema = z.object({
   email: z.email("Enter a valid email address.").trim().toLowerCase(),
-  password: z.string().min(1, "Password is required."),
+  password: z.string().min(3, "Password is required."),
 });
 
 type LoginFormValues = z.infer<typeof loginSchema>;
@@ -43,6 +43,7 @@ export default function LoginForm() {
   const router = useRouter();
   const { login } = useAuth();
   const searchParams = useSearchParams();
+  const registeredSuccessfully = searchParams.get("registered") === "true";
   const redirectPath = searchParams.get("redirect") ?? "/dashboard";
   const [serverError, setServerError] = useState<string | null>(null);
 
@@ -89,6 +90,14 @@ export default function LoginForm() {
       </CardHeader>
 
       <CardContent>
+        {registeredSuccessfully && (
+          <p
+            role="status"
+            className="mb-4 rounded-md border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800"
+          >
+            Your account was created successfully. You can now log in.
+          </p>
+        )}
         <form id="login-form" onSubmit={form.handleSubmit(onSubmit)} noValidate>
           <FieldGroup>
             <Field
