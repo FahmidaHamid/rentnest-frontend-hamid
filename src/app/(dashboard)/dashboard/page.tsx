@@ -6,7 +6,6 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 export default function DashboardPage() {
-  //const { user, isLoading } = useAuth();
   const { user, isLoading, hasRole } = useAuth();
 
   if (isLoading) {
@@ -40,7 +39,19 @@ export default function DashboardPage() {
             </p>
           </section>
         )}
+        {hasRole("ADMIN") && (
+          <section className="rounded-lg border p-6">
+            <h2 className="font-heading text-xl font-semibold">Admin tools</h2>
 
+            <p className="mt-2 text-sm text-muted-foreground">
+              Manage users, properties, and tenant requests.
+            </p>
+
+            <Button className="mt-4" render={<Link href="/admin" />}>
+              Open admin dashboard
+            </Button>
+          </section>
+        )}
         {hasRole("LANDLORD") && (
           <section className="rounded-lg border p-6">
             <h2 className="font-heading text-xl font-semibold">
