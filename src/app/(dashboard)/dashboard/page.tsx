@@ -47,9 +47,9 @@ export default function DashboardPage() {
               Manage users, properties, and tenant requests.
             </p>
 
-            <Button className="mt-4" render={<Link href="/admin" />}>
-              Open admin dashboard
-            </Button>
+            <Link href="/admin">
+              <Button className="mt-4">Open admin dashboard</Button>
+            </Link>
           </section>
         )}
         {hasRole("LANDLORD") && (
@@ -62,12 +62,9 @@ export default function DashboardPage() {
               Manage your property listings and incoming requests.
             </p>
 
-            <Button
-              className="mt-4"
-              render={<Link href="/dashboard/landlord" />}
-            >
-              Open landlord dashboard
-            </Button>
+            <Link href="/dashboard/landlord">
+              <Button className="mt-4">Open landlord dashboard</Button>
+            </Link>
           </section>
         )}
 
@@ -79,12 +76,9 @@ export default function DashboardPage() {
               View your rent and purchase requests.
             </p>
 
-            <Button
-              className="mt-4"
-              render={<Link href="/dashboard/tenant/requests" />}
-            >
-              View my requests
-            </Button>
+            <Link href="/dashboard/tenant">
+              <Button className="mt-4">Open tenant dashboard</Button>
+            </Link>
           </section>
         )}
       </div>
