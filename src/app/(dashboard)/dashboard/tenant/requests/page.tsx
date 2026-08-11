@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/card";
 
 import type { RequestStatus } from "@/types/request";
+import PaymentAction from "@/components/payments/PaymentAction";
 
 type ApiErrorResponse = {
   message?: string;
@@ -206,6 +207,9 @@ export default function TenantRequestsPage() {
                             ? "Cancelling..."
                             : "Cancel request"}
                         </Button>
+                      )}
+                      {request.request_status === "APPROVED" && (
+                        <PaymentAction requestId={request.request_id} />
                       )}
                     </div>
                   </CardContent>

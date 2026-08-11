@@ -16,14 +16,36 @@ import {
 import type { AdminPropertyRequest, AdminRequestStatus } from "@/types/admin";
 import { cn } from "@/lib/utils";
 
+// const PLACEHOLDER_IMAGE =
+//   "https://images.unsplash.com/photo-1560518883-ce09059eeffa";
+
+const ALLOWED_IMAGE_HOSTS = new Set(["images.unsplash.com"]);
+const PLACEHOLDER_IMAGE =
+  "https://images.unsplash.com/photo-1560518883-ce09059eeffa";
+
+function getUsableImageUrl(value: unknown): string {
+  if (typeof value !== "string" || value.trim() === "") {
+    return PLACEHOLDER_IMAGE;
+  }
+
+  try {
+    const url = new URL(value);
+
+    if (!ALLOWED_IMAGE_HOSTS.has(url.hostname)) {
+      return PLACEHOLDER_IMAGE;
+    }
+
+    return value;
+  } catch {
+    return PLACEHOLDER_IMAGE;
+  }
+}
+
 type AdminRequestCardProps = {
   request: AdminPropertyRequest;
   isUpdating: boolean;
   onUpdateStatus: (requestId: number, status: AdminRequestStatus) => void;
 };
-
-const PLACEHOLDER_IMAGE =
-  "https://images.unsplash.com/photo-1560518883-ce09059eeffa";
 
 function formatPrice(value: number) {
   return new Intl.NumberFormat("en-US", {
@@ -57,8 +79,11 @@ export default function AdminRequestCard({
   isUpdating,
   onUpdateStatus,
 }: AdminRequestCardProps) {
-  const propertyImage =
-    request.property.property_images[0]?.image_url ?? PLACEHOLDER_IMAGE;
+  // const propertyImage =
+  //   request.property.property_images[0]?.image_url ?? PLACEHOLDER_IMAGE;
+  const propertyImage = getUsableImageUrl(
+    request.property.property_images[0]?.image_url,
+  );
 
   const landlordCompany =
     request.property.owner.landlordProfile?.company_name ??

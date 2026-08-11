@@ -2,7 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Building2, ClipboardList, LayoutDashboard, Users } from "lucide-react";
+import {
+  Building2,
+  ClipboardList,
+  LayoutDashboard,
+  MessageSquareText,
+  Users,
+} from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
@@ -26,6 +32,11 @@ const adminLinks = [
     href: "/admin/properties",
     label: "Properties",
     icon: Building2,
+  },
+  {
+    href: "/admin/reviews",
+    label: "Reviews",
+    icon: MessageSquareText,
   },
 ];
 

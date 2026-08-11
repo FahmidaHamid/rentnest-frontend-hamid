@@ -45,6 +45,7 @@ export type CreatePropertyInput = {
   asking_price: number;
   category: PropertyCategory;
   type: PropertyType;
+
   features: {
     bedrooms: number;
     bathrooms: number;
