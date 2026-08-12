@@ -43,6 +43,7 @@ const propertySchema = z.object({
     "OFFICE_SPACE",
     "STORAGE_SPACE",
   ]),
+  requested_status: z.enum(["AVAILABLE_FOR_RENT", "IN_MARKET_FOR_SALE"]),
 
   bedrooms: z.string(),
   bathrooms: z.string(),
@@ -87,6 +88,7 @@ export default function PropertyForm() {
       asking_price: "",
       category: "RESIDENTIAL",
       type: "SINGLE_FAMILY_HOME",
+      requested_status: "AVAILABLE_FOR_RENT",
       bedrooms: "0",
       bathrooms: "0",
       square_feet: "",
@@ -148,6 +150,8 @@ export default function PropertyForm() {
         asking_price: askingPrice,
         category: values.category,
         type: values.type,
+        requested_status: values.requested_status,
+
         features: {
           bedrooms,
           bathrooms,
@@ -246,29 +250,49 @@ export default function PropertyForm() {
                 </select>
               </Field>
             </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Field>
+                <FieldLabel htmlFor="requested_status">
+                  Listing purpose
+                </FieldLabel>
 
-            <Field
-              data-invalid={
-                form.formState.errors.asking_price ? true : undefined
-              }
-            >
-              <FieldLabel htmlFor="asking_price">Asking price</FieldLabel>
+                <select
+                  id="requested_status"
+                  className="h-9 w-full rounded-md border bg-transparent px-3 text-sm"
+                  {...form.register("requested_status")}
+                >
+                  <option value="AVAILABLE_FOR_RENT">For Rent</option>
+                  <option value="IN_MARKET_FOR_SALE">For Sale</option>
+                </select>
 
-              <Input
-                id="asking_price"
-                type="number"
-                min="0"
-                step="0.01"
-                inputMode="decimal"
-                placeholder="2500"
-                aria-invalid={
+                <FieldDescription>
+                  Choose whether you want to list this property for rent or for
+                  sale.
+                </FieldDescription>
+              </Field>
+              <Field
+                data-invalid={
                   form.formState.errors.asking_price ? true : undefined
                 }
-                {...form.register("asking_price")}
-              />
+              >
+                <FieldLabel htmlFor="asking_price">Asking price</FieldLabel>
 
-              <FieldError errors={[form.formState.errors.asking_price]} />
-            </Field>
+                <Input
+                  id="asking_price"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  inputMode="decimal"
+                  placeholder="2500"
+                  aria-invalid={
+                    form.formState.errors.asking_price ? true : undefined
+                  }
+                  {...form.register("asking_price")}
+                />
+
+                <FieldError errors={[form.formState.errors.asking_price]} />
+              </Field>
+            </div>
 
             <div className="grid gap-4 sm:grid-cols-3">
               <Field>

@@ -1,9 +1,9 @@
 // types/admin.ts
-
 import type {
   PropertyCategory,
   PropertyStatus,
   PropertyType,
+  RequestedPropertyStatus,
 } from "@/types/property";
 
 export type AdminRequestType = "RENT" | "BUY";
@@ -42,8 +42,11 @@ export type AdminProperty = {
   address: string;
   asking_price: number;
   status: AdminPropertyStatus;
+  requested_status: RequestedPropertyStatus;
+
   category: PropertyCategory;
   type: PropertyType;
+
   created_at: string;
   updated_at: string;
   owner: AdminPropertyOwner;

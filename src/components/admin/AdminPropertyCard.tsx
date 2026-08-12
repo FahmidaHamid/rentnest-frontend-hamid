@@ -91,6 +91,11 @@ export default function AdminPropertyCard({
   const landlordCompany =
     property.owner.landlordProfile?.company_name ?? "Independent landlord";
 
+  const requestedListingLabel =
+    property.requested_status === "AVAILABLE_FOR_RENT"
+      ? "For Rent"
+      : "For Sale";
+
   return (
     <Card className="overflow-hidden">
       <div className="grid md:grid-cols-[240px_1fr]">
@@ -186,6 +191,10 @@ export default function AdminPropertyCard({
                 {formatPrice(property.asking_price)}
               </p>
             </div>
+            <div className="rounded-md bg-muted p-3">
+              <p className="text-sm text-muted-foreground">Requested listing</p>
+              <p className="font-semibold">{requestedListingLabel}</p>
+            </div>
 
             {property.features && (
               <div className="grid gap-3 text-sm sm:grid-cols-2 lg:grid-cols-3">
@@ -228,7 +237,7 @@ export default function AdminPropertyCard({
             )}
           </CardContent>
 
-          {property.status === "PENDING_APPROVAL" && (
+          {/* {property.status === "PENDING_APPROVAL" && (
             <CardFooter className="flex flex-wrap justify-end gap-3 border-t pt-4">
               <Button
                 variant="outline"
@@ -257,6 +266,33 @@ export default function AdminPropertyCard({
                 }
               >
                 {isUpdating ? "Updating..." : "Approve for Rent"}
+              </Button>
+            </CardFooter>
+          )} */}
+          {property.status === "PENDING_APPROVAL" && (
+            <CardFooter className="flex flex-wrap justify-end gap-3 border-t pt-4">
+              <Button
+                variant="outline"
+                disabled={isUpdating}
+                onClick={() =>
+                  onUpdateStatus(property.property_id, "INAVAILABLE_OR_UNKNOWN")
+                }
+              >
+                Reject
+              </Button>
+
+              <Button
+                disabled={isUpdating}
+                onClick={() =>
+                  onUpdateStatus(
+                    property.property_id,
+                    property.requested_status,
+                  )
+                }
+              >
+                {isUpdating
+                  ? "Updating..."
+                  : `Approve ${requestedListingLabel}`}
               </Button>
             </CardFooter>
           )}

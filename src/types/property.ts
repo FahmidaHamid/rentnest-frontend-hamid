@@ -7,6 +7,10 @@ export type PropertyStatus =
   | "RENTED"
   | "SOLD";
 
+export type RequestedPropertyStatus =
+  | "AVAILABLE_FOR_RENT"
+  | "IN_MARKET_FOR_SALE";
+
 export type PropertyCategory = "RESIDENTIAL" | "COMMERCIAL";
 
 export type PropertyType =
@@ -26,25 +30,60 @@ export type PropertyFeature = {
   pet_allowed: boolean;
 };
 
+// export type LandlordProperty = {
+//   property_id: number;
+//   owner_id: number;
+//   address: string;
+//   asking_price: number;
+//   status: PropertyStatus;
+//   category: PropertyCategory;
+//   type: PropertyType;
+//   created_at: string;
+//   updated_at: string;
+//   features: PropertyFeature | null;
+//   property_images: PropertyImage[];
+// };
 export type LandlordProperty = {
   property_id: number;
   owner_id: number;
   address: string;
   asking_price: number;
+
   status: PropertyStatus;
+  requested_status: RequestedPropertyStatus;
+
   category: PropertyCategory;
   type: PropertyType;
+
   created_at: string;
   updated_at: string;
+
   features: PropertyFeature | null;
   property_images: PropertyImage[];
 };
 
+// export type CreatePropertyInput = {
+//   address: string;
+//   asking_price: number;
+//   category: PropertyCategory;
+//   type: PropertyType;
+
+//   features: {
+//     bedrooms: number;
+//     bathrooms: number;
+//     square_feet: number;
+//     year_built?: number;
+//     parking_spaces: number;
+//     pet_allowed: boolean;
+//   };
+//   property_images: string[];
+// };
 export type CreatePropertyInput = {
   address: string;
   asking_price: number;
   category: PropertyCategory;
   type: PropertyType;
+  requested_status: RequestedPropertyStatus;
 
   features: {
     bedrooms: number;
@@ -54,9 +93,9 @@ export type CreatePropertyInput = {
     parking_spaces: number;
     pet_allowed: boolean;
   };
+
   property_images: string[];
 };
-
 export type LandlordPropertiesResponse = {
   message: string;
   data: LandlordProperty[];

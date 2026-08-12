@@ -109,8 +109,8 @@ export default function PropertyRequestButton({
         {requestMutation.isPending
           ? "Submitting..."
           : requestType === "RENT"
-            ? "Request to rent"
-            : "Request to buy"}
+            ? "RENT"
+            : "BUY"}
       </Button>
 
       {successMessage && (
