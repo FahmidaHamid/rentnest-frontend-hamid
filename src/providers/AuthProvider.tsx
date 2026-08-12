@@ -91,12 +91,18 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     [queryClient],
   );
 
+  // const logout = useCallback((): void => {
+  //   removeAccessToken();
+
+  //   queryClient.removeQueries({
+  //     queryKey: AUTH_PROFILE_QUERY_KEY,
+  //   });
+  // }, [queryClient]);
+
   const logout = useCallback((): void => {
     removeAccessToken();
 
-    queryClient.removeQueries({
-      queryKey: AUTH_PROFILE_QUERY_KEY,
-    });
+    queryClient.clear();
   }, [queryClient]);
 
   const user = profileQuery.data?.user ?? null;
