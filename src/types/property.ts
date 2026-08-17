@@ -127,7 +127,7 @@ export type Property = {
   owner_id: number;
   address: string;
   asking_price: number;
-  status: string;
+  status: PropertyStatus;
   category: string;
   type: string;
   created_at: string;

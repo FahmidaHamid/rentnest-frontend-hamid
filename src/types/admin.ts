@@ -49,10 +49,20 @@ export type AdminProperty = {
 
   created_at: string;
   updated_at: string;
+
   owner: AdminPropertyOwner;
   property_images: AdminPropertyImage[];
-};
 
+  features: {
+    property_id: number;
+    bedrooms: number;
+    bathrooms: number;
+    square_feet: number;
+    year_built: number | null;
+    parking_spaces: number;
+    pet_allowed: boolean;
+  } | null;
+};
 export type AdminPropertiesResponse = {
   message: string;
   data: AdminProperty[];
