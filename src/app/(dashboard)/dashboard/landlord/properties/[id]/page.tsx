@@ -39,9 +39,12 @@ export default function LandlordPropertyDetailsPage() {
   const property = propertyQuery.data.data;
   const features = property.features;
 
-  const canModify =
-    property.status === "AVAILABLE_FOR_RENT" ||
-    property.status === "IN_MARKET_FOR_SALE";
+  // const canModify =
+  //   property.status === "AVAILABLE_FOR_RENT" ||
+  //   property.status === "IN_MARKET_FOR_SALE";
+
+  const canModify = property.status === "PENDING_APPROVAL";
+  const canDelete = property.status === "PENDING_APPROVAL";
 
   return (
     <main className="flex-1 px-4 py-10 sm:px-6">
@@ -70,7 +73,21 @@ export default function LandlordPropertyDetailsPage() {
             </span>
           </div>
         </div>
-
+        {property.property_images.length > 0 && (
+          <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {property.property_images.map((image) => (
+              <div
+                key={image.image_id}
+                role="img"
+                aria-label={`Property at ${property.address}`}
+                className="aspect-video rounded-lg border bg-muted bg-cover bg-center"
+                style={{
+                  backgroundImage: `url("${image.image_url}")`,
+                }}
+              />
+            ))}
+          </section>
+        )}
         <section className="grid gap-4 rounded-lg border p-6 sm:grid-cols-2 lg:grid-cols-3">
           <p>
             <span className="font-medium">Price:</span> $
@@ -130,27 +147,18 @@ export default function LandlordPropertyDetailsPage() {
             )}
           </div>
 
-          <DeletePropertyButton
+          {/* <DeletePropertyButton
             propertyId={property.property_id}
             propertyAddress={property.address}
-          />
+          /> */}
+          {canDelete && (
+            <DeletePropertyButton
+              propertyId={property.property_id}
+              propertyAddress={property.address}
+            />
+          )}
         </section>
       </div>
-      {property.property_images.length > 0 && (
-        <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {property.property_images.map((image) => (
-            <div
-              key={image.image_id}
-              role="img"
-              aria-label={`Property at ${property.address}`}
-              className="aspect-video rounded-lg border bg-muted bg-cover bg-center"
-              style={{
-                backgroundImage: `url("${image.image_url}")`,
-              }}
-            />
-          ))}
-        </section>
-      )}
     </main>
   );
 }

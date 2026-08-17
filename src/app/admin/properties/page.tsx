@@ -16,13 +16,25 @@ export default function AdminPropertiesPage() {
 
   const updatePropertyStatus = useUpdateAdminPropertyStatus();
 
+  // const handleUpdateStatus = (
+  //   propertyId: number,
+  //   status: UpdateAdminPropertyStatusPayload["status"],
+  // ) => {
+  //   updatePropertyStatus.mutate({
+  //     propertyId,
+  //     status,
+  //   });
+  // };
+
   const handleUpdateStatus = (
     propertyId: number,
     status: UpdateAdminPropertyStatusPayload["status"],
+    reviewedUpdatedAt: string,
   ) => {
     updatePropertyStatus.mutate({
       propertyId,
       status,
+      reviewedUpdatedAt,
     });
   };
 

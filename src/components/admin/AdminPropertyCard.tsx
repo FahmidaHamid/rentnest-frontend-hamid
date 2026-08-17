@@ -37,7 +37,11 @@ type ModerationStatus =
 type AdminPropertyCardProps = {
   property: AdminProperty;
   isUpdating: boolean;
-  onUpdateStatus: (propertyId: number, status: ModerationStatus) => void;
+  onUpdateStatus: (
+    propertyId: number,
+    status: ModerationStatus,
+    reviewedUpdatedAt: string,
+  ) => void;
 };
 
 const PLACEHOLDER_IMAGE =
@@ -275,7 +279,11 @@ export default function AdminPropertyCard({
                 variant="outline"
                 disabled={isUpdating}
                 onClick={() =>
-                  onUpdateStatus(property.property_id, "INAVAILABLE_OR_UNKNOWN")
+                  onUpdateStatus(
+                    property.property_id,
+                    "INAVAILABLE_OR_UNKNOWN",
+                    property.updated_at,
+                  )
                 }
               >
                 Reject
@@ -287,6 +295,7 @@ export default function AdminPropertyCard({
                   onUpdateStatus(
                     property.property_id,
                     property.requested_status,
+                    property.updated_at,
                   )
                 }
               >

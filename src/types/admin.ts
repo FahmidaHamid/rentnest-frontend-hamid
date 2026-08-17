@@ -58,12 +58,18 @@ export type AdminPropertiesResponse = {
   data: AdminProperty[];
 };
 
+// export type UpdateAdminPropertyStatusPayload = {
+//   propertyId: number;
+//   status:
+//     | "AVAILABLE_FOR_RENT"
+//     | "IN_MARKET_FOR_SALE"
+//     | "INAVAILABLE_OR_UNKNOWN";
+// };
+
 export type UpdateAdminPropertyStatusPayload = {
   propertyId: number;
-  status:
-    | "AVAILABLE_FOR_RENT"
-    | "IN_MARKET_FOR_SALE"
-    | "INAVAILABLE_OR_UNKNOWN";
+  status: AdminPropertyStatus;
+  reviewedUpdatedAt: string;
 };
 
 export type AdminRequestUser = {

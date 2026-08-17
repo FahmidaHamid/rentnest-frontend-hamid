@@ -23,9 +23,11 @@ export const getAdminProperties = async (
 export const updateAdminPropertyStatus = async ({
   propertyId,
   status,
+  reviewedUpdatedAt,
 }: UpdateAdminPropertyStatusPayload) => {
   const response = await api.patch(`/admin/properties/${propertyId}/status`, {
     status,
+    reviewed_updated_at: reviewedUpdatedAt,
   });
 
   return response.data;

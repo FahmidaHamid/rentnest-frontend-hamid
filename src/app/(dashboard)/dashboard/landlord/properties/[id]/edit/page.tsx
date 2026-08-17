@@ -38,9 +38,10 @@ export default function EditPropertyPage() {
 
   const property = propertyQuery.data.data;
 
-  const canModify =
-    property.status === "AVAILABLE_FOR_RENT" ||
-    property.status === "IN_MARKET_FOR_SALE";
+  // const canModify =
+  //   property.status === "AVAILABLE_FOR_RENT" ||
+  //   property.status === "IN_MARKET_FOR_SALE";
+  const canModify = property.status === "PENDING_APPROVAL";
 
   if (!canModify) {
     return (
