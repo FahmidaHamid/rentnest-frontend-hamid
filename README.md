@@ -7,6 +7,22 @@ RentNest is a full-stack property marketplace for renting and purchasing propert
 - **Frontend:** https://rentnest-frontend-hamid.vercel.app/
 - **Backend API:** https://rental-platform-rentnest-hamid.vercel.app/
 
+## Sample Accounts:
+
+- admin : {
+  admin@rentnest.com
+  }
+- tenant: {
+  michael.tenant@rentnest.com
+  }
+- landlord: {
+  admin@rentnest.com,
+  michael.tenant@rentnest.com
+  }
+- password (same for every dummy account): {
+  Password123!
+  }
+
 ## Overview
 
 The frontend provides role-aware interfaces for:
@@ -36,6 +52,7 @@ Users may have more than one role. For example, a tenant who successfully purcha
 ## Core Features
 
 ### Public Experience
+
 - Home page
 - Browse available properties
 - Property detail pages
@@ -43,6 +60,7 @@ Users may have more than one role. For example, a tenant who successfully purcha
 - Remote property images
 
 ### Authentication
+
 - Registration
 - Login
 - JWT-based authenticated sessions
@@ -50,6 +68,7 @@ Users may have more than one role. For example, a tenant who successfully purcha
 - Auth state through `AuthProvider`
 
 ### Tenant Dashboard
+
 - Browse eligible properties
 - Submit RENT or BUY requests
 - View personal property requests
@@ -59,6 +78,7 @@ Users may have more than one role. For example, a tenant who successfully purcha
 - View payment state
 
 ### Landlord Dashboard
+
 - View owned properties
 - Create new property listings
 - Edit pending listings
@@ -66,6 +86,7 @@ Users may have more than one role. For example, a tenant who successfully purcha
 - Property ownership automatically reflects backend ownership transfer after a successful purchase
 
 ### Admin Dashboard
+
 - View and moderate pending properties
 - Approve a listing only for the landlord's requested status
 - Reject pending listings
@@ -265,31 +286,37 @@ https://rentnest-frontend-hamid.vercel.app/
 The frontend participated in six structured testing phases together with the backend.
 
 ### Phase 1 — Property Moderation and Concurrency
+
 **PASS**
 
 Verified stale timestamps return `409`, while refreshed property versions can be approved.
 
 ### Phase 2 — Tenant Request Rules
+
 **PASS**
 
 Verified RENT/BUY compatibility, admin decisions, competing requests, and unavailable-property restrictions.
 
 ### Phase 3 — Payments
+
 **PASS**
 
 Verified successful payment, declined-card retry, and business-payment reuse.
 
 ### Phase 4 — Ownership and Role Integrity
+
 **PASS**
 
 Verified successful purchase moves the property to the buyer and adds landlord capability without removing the seller's landlord role.
 
 ### Phase 5 — Authentication and Frontend State
+
 **PASS with minor UX limitation**
 
 A user promoted from tenant to landlord may need to refresh the page before the frontend reflects the new role.
 
 ### Phase 6 — Deployed Smoke Test
+
 **PASS**
 
 Verified the deployed frontend against the deployed backend/Neon data for public, tenant, landlord, and admin flows.
