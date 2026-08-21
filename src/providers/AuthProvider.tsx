@@ -15,22 +15,28 @@ import {
   saveAccessToken,
   subscribeToAccessToken,
 } from "@/lib/auth-storage";
-import { getProfile, login as loginRequest } from "@/services/auth.service";
+import {
+  getProfile,
+  googleLogin as googleLoginRequest,
+  login as loginRequest,
+} from "@/services/auth.service";
 
 import type {
   AuthUser,
   LoginInput,
   ProfileResponse,
   UserRole,
+  GoogleLoginResponse,
 } from "@/types/auth";
 
-const AUTH_PROFILE_QUERY_KEY = ["auth", "profile"] as const;
+const AUTH_PROFILE_QUERY_KEY = ["auth", "profile", "google"] as const;
 
 type AuthContextValue = {
   user: AuthUser | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (credentials: LoginInput) => Promise<AuthUser>;
+  googleLogin: (credential: string) => Promise<GoogleLoginResponse>;
   logout: () => void;
   hasRole: (role: UserRole) => boolean;
 };
@@ -91,13 +97,23 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     [queryClient],
   );
 
-  // const logout = useCallback((): void => {
-  //   removeAccessToken();
+  const googleLogin = useCallback(
+    async (credentials: string): Promise<GoogleLoginResponse> => {
+      const response = await googleLoginRequest(credentials);
 
-  //   queryClient.removeQueries({
-  //     queryKey: AUTH_PROFILE_QUERY_KEY,
-  //   });
-  // }, [queryClient]);
+      if (!response.registrationRequired) {
+        saveAccessToken(response.accessToken);
+
+        queryClient.setQueryData<ProfileResponse>(AUTH_PROFILE_QUERY_KEY, {
+          message: "Google login successful",
+          user: response.user,
+        });
+      }
+
+      return response;
+    },
+    [queryClient],
+  );
 
   const logout = useCallback((): void => {
     removeAccessToken();
@@ -121,6 +137,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
       accessToken && (profileQuery.isPending || profileQuery.isFetching),
     ),
     login,
+    googleLogin,
     logout,
     hasRole,
   };

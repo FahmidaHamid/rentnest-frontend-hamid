@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-//import { useRouter } from "next/navigation";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { isAxiosError } from "axios";
@@ -27,6 +26,7 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import GoogleLoginButton from "../auth/GoogleLoginButton";
 
 const loginSchema = z.object({
   email: z.email("Enter a valid email address.").trim().toLowerCase(),
@@ -46,6 +46,7 @@ export default function LoginForm() {
   const registeredSuccessfully = searchParams.get("registered") === "true";
   const redirectPath = searchParams.get("redirect") ?? "/dashboard";
   const [serverError, setServerError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -122,14 +123,28 @@ export default function LoginForm() {
             >
               <FieldLabel htmlFor="password">Password</FieldLabel>
 
-              <Input
-                id="password"
-                type="password"
-                autoComplete="current-password"
-                placeholder="Enter your password"
-                aria-invalid={form.formState.errors.password ? true : undefined}
-                {...form.register("password")}
-              />
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  autoComplete="current-password"
+                  placeholder="Enter your password"
+                  aria-invalid={
+                    form.formState.errors.password ? true : undefined
+                  }
+                  className="pr-16"
+                  {...form.register("password")}
+                />
+
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((current) => !current)}
+                  className="absolute inset-y-0 right-3 flex items-center text-sm text-muted-foreground hover:text-foreground"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? "Hide" : "Show"}
+                </button>
+              </div>
 
               <FieldError errors={[form.formState.errors.password]} />
             </Field>
@@ -152,6 +167,18 @@ export default function LoginForm() {
         >
           {form.formState.isSubmitting ? "Signing in..." : "Sign in"}
         </Button>
+
+        <div className="flex w-full items-center gap-3">
+          <div className="h-px flex-1 bg-border" />
+
+          <span className="text-xs uppercase text-muted-foreground">or</span>
+
+          <div className="h-px flex-1 bg-border" />
+        </div>
+
+        <div className="flex w-full justify-center">
+          <GoogleLoginButton />
+        </div>
 
         <p className="text-center text-sm text-muted-foreground">
           Don&apos;t have an account?{" "}

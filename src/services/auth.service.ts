@@ -1,6 +1,9 @@
 import api from "@/lib/axios";
 
 import type {
+  GoogleLoginResponse,
+  GoogleRegisterInput,
+  GoogleRegisterResponse,
   LoginInput,
   LoginResponse,
   ProfileResponse,
@@ -14,10 +17,31 @@ export async function login(credentials: LoginInput): Promise<LoginResponse> {
   return data;
 }
 
+export async function googleLogin(
+  credential: string,
+): Promise<GoogleLoginResponse> {
+  const { data } = await api.post<GoogleLoginResponse>("/auth/google/login", {
+    credential,
+  });
+
+  return data;
+}
+
 export async function register(
   payload: RegisterInput,
 ): Promise<RegisterResponse> {
   const { data } = await api.post<RegisterResponse>("/auth/register", payload);
+
+  return data;
+}
+
+export async function registerGoogleUser(
+  payload: GoogleRegisterInput,
+): Promise<GoogleRegisterResponse> {
+  const { data } = await api.post<GoogleRegisterResponse>(
+    "/auth/google/register",
+    payload,
+  );
 
   return data;
 }

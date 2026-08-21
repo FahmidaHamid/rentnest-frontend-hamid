@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 import Navbar from "@/components/shared/NavBar";
 import QueryProvider from "@/providers/QueryProvider";
 import AuthProvider from "@/providers/AuthProvider";
-
+import { GoogleOAuthProvider } from "@react-oauth/google";
 const playfairDisplayHeading = Playfair_Display({
   subsets: ["latin"],
   variable: "--font-heading",
@@ -52,12 +52,14 @@ export default function RootLayout({
       )}
     >
       <body className="min-h-full flex flex-col">
-        <QueryProvider>
-          <AuthProvider>
-            <Navbar />
-            {children}
-          </AuthProvider>
-        </QueryProvider>
+        <GoogleOAuthProvider clientId={process.env.GOOGLE_CLIENT_ID}>
+          <QueryProvider>
+            <AuthProvider>
+              <Navbar />
+              {children}
+            </AuthProvider>
+          </QueryProvider>
+        </GoogleOAuthProvider>
       </body>
     </html>
   );

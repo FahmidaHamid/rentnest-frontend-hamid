@@ -62,20 +62,45 @@ export type RegisterInput = {
   landlord?: LandlordRegistrationData;
 };
 
-// export type RegisterInput = {
-//   first_name: string;
-//   last_name: string;
-//   email: string;
-//   password: string;
-//   roles: UserRole[];
-//   tenant?: TenantRegistrationData;
-//   landlord?: LandlordRegistrationData;
-// };
-
 export type RegisterResponse = {
   message: string;
   user: {
     user_id: number;
     email: string;
   };
+};
+
+export type GoogleUserPreview = {
+  email: string;
+  first_name: string;
+  last_name: string;
+};
+
+export type GoogleLoginExistingUserResponse = {
+  registrationRequired: false;
+  user: AuthUser;
+  accessToken: string;
+};
+
+export type GoogleLoginNewUserResponse = {
+  registrationRequired: true;
+  googleUser: GoogleUserPreview;
+  registrationToken: string;
+};
+
+export type GoogleLoginResponse =
+  | GoogleLoginExistingUserResponse
+  | GoogleLoginNewUserResponse;
+
+export type GoogleRegisterInput = {
+  registrationToken: string;
+  roles: PublicRegistrationRole[];
+  tenant?: TenantRegistrationData;
+  landlord?: LandlordRegistrationData;
+};
+
+export type GoogleRegisterResponse = {
+  message: string;
+  user: AuthUser;
+  accessToken: string;
 };
