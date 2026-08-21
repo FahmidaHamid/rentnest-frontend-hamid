@@ -52,7 +52,9 @@ export default function RootLayout({
       )}
     >
       <body className="min-h-full flex flex-col">
-        <GoogleOAuthProvider clientId={process.env.GOOGLE_CLIENT_ID}>
+        <GoogleOAuthProvider
+          clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!}
+        >
           <QueryProvider>
             <AuthProvider>
               <Navbar />
