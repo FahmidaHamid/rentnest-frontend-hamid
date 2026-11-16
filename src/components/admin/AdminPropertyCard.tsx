@@ -65,6 +65,24 @@ function formatLabel(value: string) {
   return value.replaceAll("_", " ");
 }
 
+const isValidPropertyImage = (src: unknown): boolean => {
+  if (typeof src !== "string") {
+    return false;
+  }
+
+  try {
+    const url = new URL(src);
+
+    return (
+      url.protocol === "https:" &&
+      url.hostname === "images.unsplash.com" &&
+      url.port === ""
+    );
+  } catch {
+    return false;
+  }
+};
+
 function getStatusBadgeClass(status: AdminPropertyStatus) {
   switch (status) {
     case "AVAILABLE_FOR_RENT":
@@ -100,17 +118,27 @@ export default function AdminPropertyCard({
       ? "For Rent"
       : "For Sale";
 
+  //console.log("Admin property image:", property.address, propertyImage);
+
   return (
     <Card className="overflow-hidden">
       <div className="grid md:grid-cols-[240px_1fr]">
         <div className="relative min-h-56 bg-muted md:min-h-full">
-          <Image
-            src={propertyImage}
-            alt={property.address}
-            fill
-            className="object-cover"
-            sizes="(max-width: 768px) 100vw, 240px"
-          />
+          {isValidPropertyImage(propertyImage) ? (
+            <Image
+              src={propertyImage}
+              alt={property.address}
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, 240px"
+            />
+          ) : (
+            <div className="flex h-full min-h-56 items-center justify-center bg-muted">
+              <span className="text-sm text-muted-foreground">
+                No image available
+              </span>
+            </div>
+          )}
         </div>
 
         <div>
