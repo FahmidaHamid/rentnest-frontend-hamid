@@ -53,6 +53,9 @@ function getStatusClassName(status: PropertyStatus): string {
 
     case "INAVAILABLE_OR_UNKNOWN":
       return "border-red-200 bg-red-50 text-red-800";
+
+    case "ON_HOLD":
+      return "border-orange-200 bg-orange-50 text-orange-800";
   }
 }
 

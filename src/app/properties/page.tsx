@@ -1,12 +1,109 @@
+// "use client";
+
+// import { useQuery } from "@tanstack/react-query";
+
+// import PropertyCard from "@/components/shared/PropertyCard";
+// import PropertyFilter from "@/components/shared/PropertyFilter";
+// import { getProperties } from "@/services/property.service";
+
+// export default function PropertiesPage() {
+//   const {
+//     data: properties = [],
+//     isLoading,
+//     isError,
+//     error,
+//   } = useQuery({
+//     queryKey: ["properties"],
+//     queryFn: getProperties,
+//   });
+
+//   if (isLoading) {
+//     return (
+//       <main className="mx-auto max-w-7xl px-6 py-10">
+//         <p>Loading properties...</p>
+//       </main>
+//     );
+//   }
+
+//   if (isError) {
+//     return (
+//       <main className="mx-auto max-w-7xl px-6 py-10">
+//         <h1 className="text-2xl font-bold text-red-600">
+//           Unable to load properties
+//         </h1>
+
+//         <p className="mt-2 text-gray-600">
+//           {error instanceof Error
+//             ? error.message
+//             : "An unexpected error occurred."}
+//         </p>
+//       </main>
+//     );
+//   }
+
+//   return (
+//     <main className="mx-auto max-w-7xl px-6 py-10">
+//       <section>
+//         <h1 className="text-4xl font-bold">Browse Properties</h1>
+
+//         <p className="mt-2 text-gray-600">
+//           Find your next home from available properties.
+//         </p>
+
+//         <PropertyFilter />
+//       </section>
+
+//       <section className="mt-10">
+//         <div className="mb-6 flex items-center justify-between">
+//           <h2 className="text-2xl font-semibold">Available Properties</h2>
+
+//           <p className="text-sm text-gray-500">
+//             {properties.length}{" "}
+//             {properties.length === 1 ? "property" : "properties"} found
+//           </p>
+//         </div>
+
+//         {properties.length === 0 ? (
+//           <div className="rounded-lg border p-10 text-center">
+//             <h3 className="text-xl font-semibold">No properties found</h3>
+
+//             <p className="mt-2 text-gray-500">
+//               There are currently no available properties.
+//             </p>
+//           </div>
+//         ) : (
+//           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+//             {properties.map((property) => (
+//               <PropertyCard key={property.property_id} property={property} />
+//             ))}
+//           </div>
+//         )}
+//       </section>
+//     </main>
+//   );
+// }
+
 "use client";
 
+import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 
 import PropertyCard from "@/components/shared/PropertyCard";
-import PropertyFilter from "@/components/shared/PropertyFilter";
+import PropertyFilter, {
+  type PropertyFilters,
+} from "@/components/shared/PropertyFilter";
+
 import { getProperties } from "@/services/property.service";
 
 export default function PropertiesPage() {
+  // Filters applied when the user clicks Search Properties
+  const [activeFilters, setActiveFilters] = useState<PropertyFilters>({
+    location: "",
+    minPrice: "",
+    maxPrice: "",
+  });
+
+  // Retrieve available properties from the backend
   const {
     data: properties = [],
     isLoading,
@@ -16,6 +113,35 @@ export default function PropertiesPage() {
     queryKey: ["properties"],
     queryFn: getProperties,
   });
+
+  // Apply location and price filters
+  const filteredProperties = useMemo(() => {
+    const location = activeFilters.location.trim().toLowerCase();
+
+    const minPrice =
+      activeFilters.minPrice === ""
+        ? null
+        : Number(activeFilters.minPrice);
+
+    const maxPrice =
+      activeFilters.maxPrice === ""
+        ? null
+        : Number(activeFilters.maxPrice);
+
+    return properties.filter((property) => {
+      const matchesLocation =
+        location === "" ||
+        property.address.toLowerCase().includes(location);
+
+      const matchesMinPrice =
+        minPrice === null || property.asking_price >= minPrice;
+
+      const matchesMaxPrice =
+        maxPrice === null || property.asking_price <= maxPrice;
+
+      return matchesLocation && matchesMinPrice && matchesMaxPrice;
+    });
+  }, [properties, activeFilters]);
 
   if (isLoading) {
     return (
@@ -43,38 +169,52 @@ export default function PropertiesPage() {
 
   return (
     <main className="mx-auto max-w-7xl px-6 py-10">
+      {/* Page heading and filters */}
       <section>
-        <h1 className="text-4xl font-bold">Browse Properties</h1>
+        <h1 className="font-heading text-4xl font-bold">
+          Browse Properties
+        </h1>
 
-        <p className="mt-2 text-gray-600">
+        <p className="mt-2 text-muted-foreground">
           Find your next home from available properties.
         </p>
 
-        <PropertyFilter />
+        <PropertyFilter onSearch={setActiveFilters} />
       </section>
 
+      {/* Property results */}
       <section className="mt-10">
         <div className="mb-6 flex items-center justify-between">
-          <h2 className="text-2xl font-semibold">Available Properties</h2>
+          <h2 className="font-heading text-2xl font-semibold">
+            Available Properties
+          </h2>
 
-          <p className="text-sm text-gray-500">
-            {properties.length}{" "}
-            {properties.length === 1 ? "property" : "properties"} found
+          <p className="text-sm text-muted-foreground">
+            {filteredProperties.length}{" "}
+            {filteredProperties.length === 1
+              ? "property"
+              : "properties"}{" "}
+            found
           </p>
         </div>
 
-        {properties.length === 0 ? (
+        {filteredProperties.length === 0 ? (
           <div className="rounded-lg border p-10 text-center">
-            <h3 className="text-xl font-semibold">No properties found</h3>
+            <h3 className="text-xl font-semibold">
+              No matching properties found
+            </h3>
 
-            <p className="mt-2 text-gray-500">
-              There are currently no available properties.
+            <p className="mt-2 text-muted-foreground">
+              Try adjusting your location or price range.
             </p>
           </div>
         ) : (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {properties.map((property) => (
-              <PropertyCard key={property.property_id} property={property} />
+            {filteredProperties.map((property) => (
+              <PropertyCard
+                key={property.property_id}
+                property={property}
+              />
             ))}
           </div>
         )}

@@ -71,7 +71,8 @@ export default function PropertyCard({ property }: PropertyCardProps) {
     : PLACEHOLDER_IMAGE;
 
   return (
-    <Card className="overflow-hidden">
+    <Card className="flex h-full flex-col overflow-hidden">
+    {/* <Card className="overflow-hidden"> */}
       <div className="relative h-52 w-full">
         <Image
           src={imageSource}
@@ -139,7 +140,7 @@ export default function PropertyCard({ property }: PropertyCardProps) {
         )}
       </CardContent>
 
-      <CardFooter>
+      <CardFooter className="mt-auto">
         <Link href={`/properties/${property.property_id}`} className="w-full">
           <Button className="w-full">Show details</Button>
         </Link>

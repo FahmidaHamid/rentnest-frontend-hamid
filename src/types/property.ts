@@ -4,6 +4,7 @@ export type PropertyStatus =
   | "IN_MARKET_FOR_SALE"
   | "CURRENTLY_OCCUPIED"
   | "INAVAILABLE_OR_UNKNOWN"
+  | "ON_HOLD"
   | "RENTED"
   | "SOLD";
 
